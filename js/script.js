@@ -58,7 +58,7 @@ function loadFurniture(showError, availableColors, availableTypes){
 
 }
 
-function showData(dataArray, all, searchName, selectedTypes, selectedColors, deliverable, inStock){
+function showData(dataArray, all, searchName, selectedTypes, selectedColors, deliverable, stock){
   var strHTML = "";
   var show = true;
   if(dataArray.length > 0){
@@ -88,7 +88,11 @@ function showData(dataArray, all, searchName, selectedTypes, selectedColors, del
       if((all) && (!availableTypes.includes(data.type)))
         availableTypes.push(data.type);
 
-      if((!all) && ((!selectedTypes.includes(data.type)) || (!hasColors) || (deliverable != data.deliverable) || ((inStock && (data.stock == "0") ) || (!inStock && (data.stock != "0")))))
+
+      if((!all) && (stock != "") && (parseInt(data.stock) > parseInt(stock)))
+        show = false;
+
+      if((!all) && ((!selectedTypes.includes(data.type)) || (!hasColors) || (deliverable != data.deliverable)))
         show = false;
 
       if ((all) || (!all && show))
@@ -96,10 +100,14 @@ function showData(dataArray, all, searchName, selectedTypes, selectedColors, del
         strHTML += "<div class='item' id='item" + i + "'>";
         strHTML += "<img src='" + data.imageUrl + "' alt='a picture of " + data.name + "'>";
         strHTML += "<p>" + data.name + " <span class='type'>" + data.type + "</span></p><p>$" + data.cost + "</p>";
+
+        strHTML += "<p";
         if(data.stock == "0")
         {
-          strHTML += "<p class='warning'>Out of stock</p>";
+          strHTML += " class='warning'";
         }
+        strHTML += ">Stock: " + data.stock + "</p>";
+
         strHTML += "<div class='details'><p>" + data.description;
         strHTML += "</p></div>";
         strHTML += "</div>"; //class=item
@@ -121,7 +129,12 @@ function attachListeners()
     {
       var i = parseInt(this.id.substring(4));
       showItem(i);
+      $(".itemDetails, .itemContent").addClass("active");
     }
+  });
+
+  $(".itemDetails").on("click", function(){
+    $(".itemDetails, .itemContent").removeClass("active");
   });
 
   $(".types input[type='checkbox']").change(function()
@@ -157,9 +170,12 @@ function showItem(index)
   }
 
   strHTML += "<div><p>" + data.description;
-  strHTML += "</p></div>";
+  strHTML += "</p>";
+  for(var i=0; i< data.colors.length; i++)
+    strHTML += "<input style='background-color:" + data.colors[i] + ";width:25px;heigth:25px;border: 1px solid darkgrey;'>  </input>"
+  strHTML += "</div>";
 
-  $(".itemDetails").html(strHTML);
+  $(".addDetails").html(strHTML);
 }
 
 function filterColors(color)
@@ -224,11 +240,7 @@ function showFilter()
 }
 
 $(document).ready(function() {
-  // $("#form").submit(function(event){
-  //   event.preventDefault();
-
-
-    showData(MOCK.body.data, true, "", selectedTypes, selectedColors, true, true);
+    showData(MOCK.body.data, true, "", selectedTypes, selectedColors, true, "");
     showFilter();
     attachListeners();
   //  getFurniture(showError);
@@ -236,17 +248,17 @@ $(document).ready(function() {
   $("#search").click(function(){
     var searchName = $('#searchName').val();
     var deliverable = $("#deliverable").prop("checked");
-    var inStock = $("#inStock").prop("checked");
-    showData(MOCK.body.data, false, $("#searchName").val(), selectedTypes, selectedColors, $("#deliverable").prop("checked"), $("#inStock").prop("checked"));
+    var stock = $("#stock").val();
+    showData(MOCK.body.data, false, $("#searchName").val(), selectedTypes, selectedColors, $("#deliverable").prop("checked"), $("#stock").val());
   });
 
   $("#clear").click(function(){
     selectedTypes = [];
     selectedIndex = [];
-    $("#inStock").checked = true;
     $("#deliverable").checked = true;
     $("#searchName").val("");
-    showData(MOCK.body.data, true, "", selectedTypes, selectedColors, true, true);
+    $("#stock").val("");
+    showData(MOCK.body.data, true, "", selectedTypes, selectedColors, true, "");
     showFilter();
   });
 
