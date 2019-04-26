@@ -186,7 +186,7 @@ function showFilter(){
   var strHTML = "";
 
   if(availableTypes.length > 0){
-    strHTML += "<div class='types'><label>Types</label><br>";
+    strHTML += "<div class='types'><br><label>Types</label><br>";
     for(var i=0; i < availableTypes.length; i++){
       strHTML += "<input type='checkbox' name='type' value='" + availableTypes[i] + "' checked> " + availableTypes[i] + "<br>";
       selectedTypes.push(availableTypes[i]);
@@ -194,7 +194,7 @@ function showFilter(){
     strHTML += "</div>";
   }
   if(availableColors.length > 0){
-    strHTML += "<div class='colors'><label>Colors</label><br>";
+    strHTML += "<div class='colors'><br><label>Colors</label><br>";
     for(var i=0; i < availableColors.length; i++){
       strHTML += "<input type='checkbox' name='color' value='" + availableColors[i] + "' checked> " + availableColors[i] + "<br>";
       selectedColors.push(availableColors[i]);
