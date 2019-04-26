@@ -22,35 +22,8 @@ function loadFurniture(showError, availableColors, availableTypes){
 
         colors.push();
       }
-      // newDoctor = new Doctor(data.profile.last_name, data.profile.first_name, data.profile.image_url);
-      // allDoctors.push(newDoctor);
-      // let newPractice;
-      // let address;
-      // let newPatients;
-      // for(let k=0; k < data.practices.length; k++)
-      // {
-      //   address = data.practices[k].visit_address.street + " " + data.practices[k].visit_address.city + " " + data.practices[k].visit_address.state + " " + data.practices[k].visit_address.zip;
-      //
-      //   if(data.practices[k].accepts_new_patients.toString() == "true")
-      //   {
-      //     newPatients = "Yes";
-      //   }
-      //   else
-      //   {
-      //     newPatients = "No";
-      //   }
-      //
-      //   newPractice = new Practice(data.practices[k].name, address, newPatients);
-      //
-      //   for(let j=0; j < data.practices[k].phones.length; j++)
-      //   {
-      //     newPractice.addPhone(data.practices[k].phones[j].number);
-      //   }
-      //   newDoctor.addPractice(newPractice);
-      // }
     }
   }
-//  showDoctors(allDoctors);
 
 }).fail(function(error){
   showError(error);
@@ -68,14 +41,13 @@ function showData(dataArray, all, searchName, selectedTypes, selectedColors, del
       var show = true;
       let data = dataArray[i];
       console.log(data);
-      if ((!all) && (name != "") && (!data.name.toUpperCase().includes(searchName.toUpperCase())))
+      if ((!all) && (searchName != "") && (!data.name.toUpperCase().includes(searchName.toUpperCase())))
         show = false;
 
       let colors = [];
       var hasColors = false;
       for(let j = 0; j < data.colors.length; j++)
       {
-        //colors.push(data.colors[j]);
         if((all) && (!availableColors.includes(data.colors[j])))
           availableColors.push(data.colors[j]);
         if((!all) && (selectedColors.includes(data.colors[j])))
@@ -99,34 +71,36 @@ function showData(dataArray, all, searchName, selectedTypes, selectedColors, del
       {
         strHTML += "<div class='item' id='item" + i + "'>";
         strHTML += "<img src='" + data.imageUrl + "' alt='a picture of " + data.name + "'>";
-        strHTML += "<p>" + data.name + " <span class='type'>" + data.type + "</span></p><p>$" + data.cost + "</p>";
 
-        strHTML += "<p";
-        if(data.stock == "0")
-        {
+        strHTML += "<p>ID: " + data.id + "<br>";
+        strHTML += "Type: " + data.type + "<br>";
+        strHTML += "<span";
+        if(data.stock == "0"){
           strHTML += " class='warning'";
         }
-        strHTML += ">Stock: " + data.stock + "</p>";
+        strHTML += ">Stock: " + data.stock + "</span>";
+        strHTML += "</p>";
+        strHTML += "<p>" + data.name + " <span class='type'>" + data.type + "</span></p><p>$" + data.cost + "</p>";
 
-        strHTML += "<div class='details'><p>" + data.description;
+
+        strHTML += "<p>";
+        for(var k=0; k< data.colors.length; k++){
+          strHTML += "<input style='background-color:" + data.colors[k] + ";width:25px;heigth:25px;border: 1px solid darkgrey;'>  </input>";
+        }
+        // strHTML += "</p><div class='details'><p>" + data.description;
         strHTML += "</p></div>";
         strHTML += "</div>"; //class=item
       }
     }
   }
-//  if(strHTML != "")
-  {
     $(".grid").html(strHTML);
-  }
 }
 
 function attachListeners()
 {
-  $(".grid").on("click", "div", function()
-  {
+  $(".grid").on("click", "div", function(){
     console.log(this);
-    if(this.id.indexOf("item") != -1)
-    {
+    if(this.id.indexOf("item") != -1){
       var i = parseInt(this.id.substring(4));
       showItem(i);
       $(".itemDetails, .itemContent").addClass("active");
@@ -137,14 +111,12 @@ function attachListeners()
     $(".itemDetails, .itemContent").removeClass("active");
   });
 
-  $(".types input[type='checkbox']").change(function()
-  {
+  $(".types input[type='checkbox']").change(function(){
     console.log($(this));
     filterTypes($(this).val());
   });
 
-  $(".colors input[type='checkbox']").change(function()
-  {
+  $(".colors input[type='checkbox']").change(function(){
     console.log($(this));
     filterColors($(this).val());
   });
@@ -155,82 +127,76 @@ function showItem(index)
   var data = MOCK.body.data[index];
   var strHTML = "";
   strHTML += "<img src='" + data.imageUrl + "' alt='a picture of " + data.name + "'>";
-  strHTML += "<p>" + data.name + " <span>" + data.type + "</span></p><p>$" + data.cost + "</p>";
-  if(data.stock == "0")
-  {
-    strHTML += "<p class='warning'>Out of stock</p>";
+  strHTML += "<p>ID: " + data.id + "<br>";
+  strHTML += "Type: " + data.type + "<br>";
+  strHTML += "<span";
+  if(data.stock == "0"){
+    strHTML += " class='warning'";
   }
-  if(data.deliverable == false)
-  {
+  strHTML += ">Stock: " + data.stock + "</span>";
+  strHTML += "</p>";
+
+  strHTML += "<p>" + data.name + "</p><p>$" + data.cost + "</p>";
+  // if(data.stock == "0"){
+  //   strHTML += "<p class='warning'>Out of stock</p>";
+  // }
+  if(data.deliverable == false){
     strHTML += "<p class='warning'>Not deliverable</p>";
   }
-  if(data.dimensions)
-  {
-      strHTML += "<p>" + data.dimensions.length + " x " +data.dimensions.width + " sq.ft.</p>";
+  if(data.dimensions){
+    strHTML += "<p>" + data.dimensions.length + " x " +data.dimensions.width + " sq.ft.</p>";
   }
 
   strHTML += "<div><p>" + data.description;
   strHTML += "</p>";
-  for(var i=0; i< data.colors.length; i++)
-    strHTML += "<input style='background-color:" + data.colors[i] + ";width:25px;heigth:25px;border: 1px solid darkgrey;'>  </input>"
+  for(var i=0; i< data.colors.length; i++){
+    strHTML += "<input style='background-color:" + data.colors[i] + ";width:25px;heigth:25px;border: 1px solid darkgrey;'>  </input>"}
   strHTML += "</div>";
 
   $(".addDetails").html(strHTML);
 }
 
-function filterColors(color)
-{
-  if(selectedColors.includes(color))
-  {
+function filterColors(color){
+  if(selectedColors.includes(color)){
     selectedColors.splice(selectedColors.indexOf(color), 1);
   }
-  else
-  {
+  else{
     selectedColors.push(color);
   }
 }
 
-function filterTypes(furnitureType)
-{
-  if(selectedTypes.includes(furnitureType))
-  {
+function filterTypes(furnitureType){
+  if(selectedTypes.includes(furnitureType)){
     selectedTypes.splice(selectedTypes.indexOf(furnitureType), 1);
   }
-  else
-  {
+  else{
     selectedTypes.push(furnitureType);
   }
 }
 
-function showError(error)
-{
+function showError(error){
   $(".errors").text(`There was an error processing your request: ${error.responseText}. Please try again.`);
   $(".errors").show();
 }
 
-function showFilter()
-{
+function showFilter(){
   selectedTypes = [];
   selectedColors = [];
 
   var strHTML = "";
 
-  if(availableTypes.length > 0)
-  {
+  if(availableTypes.length > 0){
     strHTML += "<div class='types'><label>Types</label><br>";
-    for(var i=0; i < availableTypes.length; i++)
-    {
-      strHTML += "<input type='checkbox' name='type' value='" + availableTypes[i] + "' checked>" + availableTypes[i] + "<br>";
+    for(var i=0; i < availableTypes.length; i++){
+      strHTML += "<input type='checkbox' name='type' value='" + availableTypes[i] + "' checked> " + availableTypes[i] + "<br>";
       selectedTypes.push(availableTypes[i]);
     }
     strHTML += "</div>";
   }
-  if(availableColors.length > 0)
-  {
+  if(availableColors.length > 0){
     strHTML += "<div class='colors'><label>Colors</label><br>";
-    for(var i=0; i < availableColors.length; i++)
-    {
-      strHTML += "<input type='checkbox' name='color' value='" + availableColors[i] + "' checked>" + availableColors[i] + "<br>";
+    for(var i=0; i < availableColors.length; i++){
+      strHTML += "<input type='checkbox' name='color' value='" + availableColors[i] + "' checked> " + availableColors[i] + "<br>";
       selectedColors.push(availableColors[i]);
     }
     strHTML += "</div>";
@@ -239,7 +205,7 @@ function showFilter()
   $(".dynamicFilter").html(strHTML);
 }
 
-$(document).ready(function() {
+$(document).ready(function(){
     showData(MOCK.body.data, true, "", selectedTypes, selectedColors, true, "");
     showFilter();
     attachListeners();

@@ -1,3 +1,6 @@
+h1{
+  text-align: center;
+}
 .grid {
   display: grid;
   grid-template-columns: 33% 33% 33%;
@@ -45,6 +48,21 @@ img {
   display: block;
 }
 
+.filter {
+  width: 200px;
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 20px;
+  left: 10px;
+  overflow-x: hidden;
+  padding:40px 0;
+}
+
+.main{
+  margin-left: 200px;
+}
+
 button{
   border: 1px solid darkgrey;
   background-color: lightgrey;
@@ -56,20 +74,20 @@ button{
   /*Hides pop-up when there is no "active" class*/
   visibility:hidden;
   position:fixed;
+  font-size: 12pt;
   background:#ffffff;
   border:1px solid darkgrey;
 
   top:50%;
   left:50%;
   width:500px;  /* adjust as per your needs */
-  height:500px;   /* adjust as per your needs */
+  height:550px;   /* adjust as per your needs */
   margin-left:-200px;   /* negative half of width above */
   margin-top:-200px;
   padding: 20px;
-  /*width:50%;
-  height:50%;
-  left:25%;*/
+  padding-top: 10px;
 }
+
 .itemDetails.active{
   /*displays pop-up when "active" class is present*/
   visibility:visible;
