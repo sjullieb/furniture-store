@@ -3,7 +3,7 @@ h1{
 }
 .grid {
   display: grid;
-  grid-template-columns: 33% 33% 33%;
+  grid-template-columns: 25% 25% 25% 25%;
   grid-gap: 5px;
   margin: 10px;
   background-color: white;
@@ -19,6 +19,7 @@ img {
   display: block;
   margin: 0 auto;
   padding: 10px;
+  max-width: 100%;
 }
 
 .item{
