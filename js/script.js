@@ -221,7 +221,7 @@ $(document).ready(function(){
   $("#clear").click(function(){
     selectedTypes = [];
     selectedIndex = [];
-    $("#deliverable").checked = true;
+    $("#deliverable").prop("checked", true);
     $("#searchName").val("");
     $("#stock").val("");
     showData(MOCK.body.data, true, "", selectedTypes, selectedColors, true, "");
