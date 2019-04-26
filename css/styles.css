@@ -1,0 +1,45 @@
+.grid {
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+  grid-gap: 5px;
+  margin: 10px;
+  background-color: white;
+}
+
+.warning {
+  color: red;
+  font-weight: bold;
+}
+
+img {
+  width: 200px;
+  display: block;
+  margin: 0 auto;
+}
+
+.item{
+  border: 1px solid darkgrey;
+  padding: 10px;
+}
+
+.item p{
+  margin-left: 20px;
+}
+
+.type {
+  font-size: 8pt;
+  color: grey;
+}
+
+.item:hover{
+  /* transform: scale(1.2); */
+}
+
+.details {
+  display: none;
+}
+
+.item:hover .details {
+  background-color: white;
+  display: block;
+}
