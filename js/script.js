@@ -3,26 +3,17 @@ var availableTypes = [];
 var availableColors = [];
 var selectedTypes = [];
 var selectedColors = [];
+var data;
 
-function loadFurniture(showError, availableColors, availableTypes){
-  console.log(1);
+function loadFurniture(showError, availableColors, availableTypes, showData, showFilter, attachListeners){
+
   $.get(`https://it771mq5n2.execute-api.us-west-2.amazonaws.com/production/furniture`).then(function(response){
   if(response.body.data.length > 0){
-    let data;
-    console.log(response.body.data);
-    for(let i=0; i < response.body.data.length; i++)
-    {
-      data = response.body.data[i];
-      console.log(data);
-      var colors = [];
-      for(j = 0; j < data.colors.length; j++)
-      {
-        if(!availableColors.includes(data.colors[j]))
-          availableColors.push(data.colors[j]);
-
-        colors.push();
-      }
-    }
+    data = response.body.data;
+    console.log(data.length);
+    showData(data, true, "", selectedTypes, selectedColors, true, "");
+    showFilter();
+    attachListeners();
   }
 
 }).fail(function(error){
@@ -35,12 +26,12 @@ function showData(dataArray, all, searchName, selectedTypes, selectedColors, del
   var strHTML = "";
   var show = true;
   if(dataArray.length > 0){
-    console.log(dataArray);
+    //console.log(dataArray);
     for(let i=0; i < dataArray.length; i++)
     {
       var show = true;
       let data = dataArray[i];
-      console.log(data);
+      //console.log(data);
       if ((!all) && (searchName != "") && (!data.name.toUpperCase().includes(searchName.toUpperCase())))
         show = false;
 
@@ -59,7 +50,6 @@ function showData(dataArray, all, searchName, selectedTypes, selectedColors, del
 
       if((all) && (!availableTypes.includes(data.type)))
         availableTypes.push(data.type);
-
 
       if((!all) && (stock != "") && (parseInt(data.stock) > parseInt(stock)))
         show = false;
@@ -82,7 +72,6 @@ function showData(dataArray, all, searchName, selectedTypes, selectedColors, del
         strHTML += "</p>";
         strHTML += "<p>" + data.name + " <span class='type'>" + data.type + "</span></p><p>$" + data.cost + "</p>";
 
-
         strHTML += "<p>";
         for(var k=0; k< data.colors.length; k++){
           strHTML += "<input style='background-color:" + data.colors[k] + ";width:25px;heigth:25px;border: 1px solid darkgrey;'>  </input>";
@@ -99,7 +88,7 @@ function showData(dataArray, all, searchName, selectedTypes, selectedColors, del
 function attachListeners()
 {
   $(".grid").on("click", "div", function(){
-    console.log(this);
+  //  console.log(this);
     if(this.id.indexOf("item") != -1){
       var i = parseInt(this.id.substring(4));
       showItem(i);
@@ -112,12 +101,10 @@ function attachListeners()
   });
 
   $(".types input[type='checkbox']").change(function(){
-    console.log($(this));
     filterTypes($(this).val());
   });
 
   $(".colors input[type='checkbox']").change(function(){
-    console.log($(this));
     filterColors($(this).val());
   });
 }
@@ -137,9 +124,7 @@ function showItem(index)
   strHTML += "</p>";
 
   strHTML += "<p>" + data.name + "</p><p>$" + data.cost + "</p>";
-  // if(data.stock == "0"){
-  //   strHTML += "<p class='warning'>Out of stock</p>";
-  // }
+
   if(data.deliverable == false){
     strHTML += "<p class='warning'>Not deliverable</p>";
   }
@@ -206,11 +191,11 @@ function showFilter(){
 }
 
 $(document).ready(function(){
-    showData(MOCK.body.data, true, "", selectedTypes, selectedColors, true, "");
-    showFilter();
-    attachListeners();
-  //  getFurniture(showError);
-  // })
+    loadFurniture(showError, availableColors, availableTypes, showData, showFilter, attachListeners);
+    // showData(MOCK.body.data, true, "", selectedTypes, selectedColors, true, "");
+    // showFilter();
+    // attachListeners();
+
   $("#search").click(function(){
     var searchName = $('#searchName').val();
     var deliverable = $("#deliverable").prop("checked");
@@ -224,8 +209,9 @@ $(document).ready(function(){
     $("#deliverable").prop("checked", true);
     $("#searchName").val("");
     $("#stock").val("");
-    showData(MOCK.body.data, true, "", selectedTypes, selectedColors, true, "");
-    showFilter();
+    loadFurniture(showError, availableColors, availableTypes, showData, showFilter, attachListeners);
+    // showData(MOCK.body.data, true, "", selectedTypes, selectedColors, true, "");
+    // showFilter();
   });
 
 });
