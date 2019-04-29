@@ -41,15 +41,6 @@ img {
   cursor: pointer;
 }
 
-.details {
-  /*display: none;*/
-}
-
-.item:hover .details {
-  background-color: white;
-  display: block;
-}
-
 .filter {
   width: 210px;
   height: 100%;
@@ -66,6 +57,9 @@ img {
   width: inherit;
 }
 
+#searchName, #stock{
+  width: 180px;
+}
 .main{
   margin-left: 210px;
 }

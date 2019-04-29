@@ -30,53 +30,53 @@ function showData(dataArray, all, searchName, selectedTypes, selectedColors, del
     for(let i=0; i < dataArray.length; i++)
     {
       var show = true;
-      let data = dataArray[i];
+      let item = dataArray[i];
       //console.log(data);
-      if ((!all) && (searchName != "") && (!data.name.toUpperCase().includes(searchName.toUpperCase())))
+      if ((!all) && (searchName != "") && (!((item.name.toUpperCase().includes(searchName.toUpperCase()) || item.id.toUpperCase().includes(searchName.toUpperCase())))))
         show = false;
 
       let colors = [];
       var hasColors = false;
-      for(let j = 0; j < data.colors.length; j++)
+      for(let j = 0; j < item.colors.length; j++)
       {
-        if((all) && (!availableColors.includes(data.colors[j])))
-          availableColors.push(data.colors[j]);
-        if((!all) && (selectedColors.includes(data.colors[j])))
+        if((all) && (!availableColors.includes(item.colors[j])))
+          availableColors.push(item.colors[j]);
+        if((!all) && (selectedColors.includes(item.colors[j])))
         {
           hasColors = true;
           break;
         }
       }
 
-      if((all) && (!availableTypes.includes(data.type)))
-        availableTypes.push(data.type);
+      if((all) && (!availableTypes.includes(item.type)))
+        availableTypes.push(item.type);
 
-      if((!all) && (stock != "") && (parseInt(data.stock) > parseInt(stock)))
+      if((!all) && (stock != "") && (parseInt(item.stock) > parseInt(stock)))
         show = false;
 
-      if((!all) && ((!selectedTypes.includes(data.type)) || (!hasColors) || (deliverable != data.deliverable)))
+      if((!all) && !((selectedTypes.includes(item.type)) && (hasColors) && (deliverable == item.deliverable)))
         show = false;
 
       if ((all) || (!all && show))
       {
         strHTML += "<div class='item' id='item" + i + "'>";
-        strHTML += "<img src='" + data.imageUrl + "' alt='a picture of " + data.name + "'>";
+        strHTML += "<img src='" + item.imageUrl + "' alt='a picture of " + item.name + "'>";
 
-        strHTML += "<p>ID: " + data.id + "<br>";
-        strHTML += "Type: " + data.type + "<br>";
+        strHTML += "<p>ID: " + item.id + "<br>";
+        strHTML += "Type: " + item.type + "<br>";
         strHTML += "<span";
-        if(data.stock == "0"){
+        if(item.stock == "0"){
           strHTML += " class='warning'";
         }
-        strHTML += ">Stock: " + data.stock + "</span>";
+        strHTML += ">Stock: " + item.stock + "</span>";
         strHTML += "</p>";
-        strHTML += "<p>" + data.name + " <span class='type'>" + data.type + "</span></p><p>$" + data.cost + "</p>";
+        strHTML += "<p>" + item.name + " <span class='type'>" + item.type + "</span></p><p>$" + item.cost + "</p>";
 
         strHTML += "<p>";
-        for(var k=0; k< data.colors.length; k++){
-          strHTML += "<input style='background-color:" + data.colors[k] + ";width:25px;heigth:25px;border: 1px solid darkgrey;'>  </input>";
+        for(var k=0; k< item.colors.length; k++){
+          strHTML += "<input style='background-color:" + item.colors[k] + ";width:25px;heigth:25px;border: 1px solid darkgrey;'>  </input>";
         }
-        // strHTML += "</p><div class='details'><p>" + data.description;
+        // strHTML += "</p><div class='details'><p>" + item.description;
         strHTML += "</p></div>";
         strHTML += "</div>"; //class=item
       }
@@ -111,31 +111,33 @@ function attachListeners()
 
 function showItem(index)
 {
-  var data = MOCK.body.data[index];
+  //var item = MOCK.body.data[index];
+  var item = data[index];
+
   var strHTML = "";
-  strHTML += "<img src='" + data.imageUrl + "' alt='a picture of " + data.name + "'>";
-  strHTML += "<p>ID: " + data.id + "<br>";
-  strHTML += "Type: " + data.type + "<br>";
+  strHTML += "<img src='" + item.imageUrl + "' alt='a picture of " + item.name + "'>";
+  strHTML += "<p>ID: " + item.id + "<br>";
+  strHTML += "Type: " + item.type + "<br>";
   strHTML += "<span";
-  if(data.stock == "0"){
+  if(item.stock == "0"){
     strHTML += " class='warning'";
   }
-  strHTML += ">Stock: " + data.stock + "</span>";
+  strHTML += ">Stock: " + item.stock + "</span>";
   strHTML += "</p>";
 
-  strHTML += "<p>" + data.name + "</p><p>$" + data.cost + "</p>";
+  strHTML += "<p>" + item.name + "</p><p>$" + item.cost + "</p>";
 
-  if(data.deliverable == false){
+  if(item.deliverable == false){
     strHTML += "<p class='warning'>Not deliverable</p>";
   }
-  if(data.dimensions){
-    strHTML += "<p>" + data.dimensions.length + " x " +data.dimensions.width + " sq.ft.</p>";
+  if(item.dimensions){
+    strHTML += "<p>" + item.dimensions.length + " x " +item.dimensions.width + " sq.ft.</p>";
   }
 
-  strHTML += "<div><p>" + data.description;
+  strHTML += "<div><p>" + item.description;
   strHTML += "</p>";
-  for(var i=0; i< data.colors.length; i++){
-    strHTML += "<input style='background-color:" + data.colors[i] + ";width:25px;heigth:25px;border: 1px solid darkgrey;'>  </input>"}
+  for(var i=0; i< item.colors.length; i++){
+    strHTML += "<input style='background-color:" + item.colors[i] + ";width:25px;heigth:25px;border: 1px solid darkgrey;'>  </input>"}
   strHTML += "</div>";
 
   $(".addDetails").html(strHTML);
@@ -200,7 +202,8 @@ $(document).ready(function(){
     var searchName = $('#searchName').val();
     var deliverable = $("#deliverable").prop("checked");
     var stock = $("#stock").val();
-    showData(MOCK.body.data, false, $("#searchName").val(), selectedTypes, selectedColors, $("#deliverable").prop("checked"), $("#stock").val());
+    //showData(MOCK.body.data, false, $("#searchName").val(), selectedTypes, selectedColors, $("#deliverable").prop("checked"), $("#stock").val());
+    showData(data, false, $("#searchName").val(), selectedTypes, selectedColors, $("#deliverable").prop("checked"), $("#stock").val());
   });
 
   $("#clear").click(function(){
